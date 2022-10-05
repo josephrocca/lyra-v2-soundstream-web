@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+</head>
+<body>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core@3.20.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-cpu@3.20.0"></script> -->
+  
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.20.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite@0.0.1-alpha.9/dist/tf-tflite.js"></script>
+  
+  <script>
+    async function start() {
+      const tfliteModel = await tflite.loadTFLiteModel("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/tflite/soundstream_encoder.tflite");
+      
+      let audioData = await fetch("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/test.wav").then(r => r.arrayBuffer());
+
+      let audioCtx = new OfflineAudioContext({sampleRate:16000, length:16000*10, numberOfChannels:1});
+      
+      let decodedData = await audioCtx.decodeAudioData(audioData); // resampled to the AudioContext's sampling rate
+
+      console.log("decodedData:", decodedData);
+
+      let float32Data = decodedData.getChannelData(0); // Float32Array for channel 0
+      
+      let chunkIndex = 0;
+      let audioChunk = float32Data.slice(chunkIndex*320, (chunkIndex+1)*320); // 320 samples at 16khz = 20ms
+      let audioChunkTensor = tf.tensor(audioChunk, [1,320], "float32");
+      
+      console.log("audioChunk:", audioChunk);
+
+      // Run inference and get output tensors.
+      let outputTensor = tfliteModel.predict({"serving_default_input_audio:0":audioChunkTensor});
+      console.log(outputTensor.dataSync());
+    }
+    start()
+  </script>
+</body>
+</html>
