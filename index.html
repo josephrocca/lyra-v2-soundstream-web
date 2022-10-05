@@ -91,13 +91,15 @@
       }
 
       let audioChunk = audioCache[url].slice(chunkI*320, (chunkI+1)*320); // 320 samples at 16khz = 20ms
+      
+      return audioChunk;
     }
 
     (async function() {
       await initModels();
       let inputSamples = await getAudioSamples("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/test.wav", 0);
       console.log("input samples:", inputSamples);
-      let embedding = await encode(samples);
+      let embedding = await encode(inputSamples);
       console.log("embedding:", embedding);
       // let outputSamples = await decode(embedding);
       // console.log("output samples:", outputSamples);
