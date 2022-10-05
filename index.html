@@ -26,11 +26,11 @@
       [
         encoderModel,
         // quantizerModel,
-        decoderModel,
+        // decoderModel,
       ] = await Promise.all([
         tflite.loadTFLiteModel("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/tflite/soundstream_encoder.tflite"),
         // tflite.loadTFLiteModel("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/tflite/quantizer.tflite"),
-        tflite.loadTFLiteModel("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/tflite/lyragan.tflite"),
+        // tflite.loadTFLiteModel("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/tflite/lyragan.tflite"),
       ]);
       console.log("Models finished loading.");
     }
@@ -97,8 +97,9 @@
     let inputSamples = await getAudioSamples("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/test.wav", i);
     console.log("input samples:", inputSamples);
     let embedding = await encode(samples);
-    let outputSamples = await decode(embedding);
-    console.log("output samples:", outputSamples);
+    console.log("embedding:", embedding);
+    // let outputSamples = await decode(embedding);
+    // console.log("output samples:", outputSamples);
   </script>
 </body>
 </html>
