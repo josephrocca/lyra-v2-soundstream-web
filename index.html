@@ -14,23 +14,25 @@
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.20.0/dist/tf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite@0.0.1-alpha.9/dist/tf-tflite.js"></script>
   
-  See browser console.
+  <button id="testButton1" onclick="testEncoderDecoder(); testButton2.disabled=true;">Test Encoder/Decoder</button>
+  <button id="testButton2" onclick="testQuantization(); testButton1.disabled=true;">Test Quantization</button>
+  <p>See browser console for result. Note that this is a WIP - it isn't working yet!</p>
   
   <script>
     let encoderModel;
     let decoderModel;
     let quantizerModel;
 
-    async function initModels() {
+    async function initModels(opts={}) {
       console.log("Loading models...");
       [
         encoderModel,
-        // quantizerModel,
-        // decoderModel,
+        quantizerModel,
+        decoderModel,
       ] = await Promise.all([
-        tflite.loadTFLiteModel("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/tflite/soundstream_encoder.tflite"),
-        // tflite.loadTFLiteModel("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/tflite/quantizer.tflite"),
-        // tflite.loadTFLiteModel("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/tflite/lyragan.tflite"),
+        opts.encoder ? tflite.loadTFLiteModel("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/tflite/soundstream_encoder.tflite") : undefined,
+        opts.quantization ? tflite.loadTFLiteModel("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/tflite/quantizer.tflite") : undefined,
+        opts.decoder ? tflite.loadTFLiteModel("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/tflite/lyragan.tflite") : undefined,
       ]);
       console.log("Models finished loading.");
     }
@@ -95,15 +97,29 @@
       return audioChunk;
     }
 
-    (async function() {
-      await initModels();
+    async function testEncoderDecoder() {
+      console.log("Testing encoding/decoding:");
+      console.warn("CURRENTLY WE CAN ONLY TEST ENCODER DUE TO THIS ISSUE: https://github.com/tensorflow/tfjs/issues/6094#issuecomment-1267870990");
+      await initModels({encoder:true});
       let inputSamples = await getAudioSamples("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/test.wav", 0);
       console.log("input samples:", inputSamples);
       let embedding = await encode(inputSamples);
-      console.log("embedding:", embedding);
+      console.log("embedding:", embedding.dataSync());
+      console.warn("Not sure why it's all zeros...");
+      
       // let outputSamples = await decode(embedding);
       // console.log("output samples:", outputSamples);
-    })();
+    }
+    
+    async function testQuantization() {
+      console.log("Testing quantization:");
+      await initModels({quantization:true});
+      let inputEmbedding = f.tensor(new Float32Array(64).fill(1), [1,1,64], "float32");
+      console.log("input embedding:", inputEmbedding.dataSync());
+      let bits = await quantize(inputEmbedding, 46);
+      let outputEmbedding = dequantize(bits);
+      console.log("output embedding:", outputEmbedding.dataSync());
+    }
 
   </script>
 </body>
