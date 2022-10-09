@@ -50,7 +50,7 @@
     async function quantize(embedding, numQuantizers=46) { // `embedding` should be a tensor of type float32[1,1,64]. `numQuantizers` can be 16, 32, or 46. Explanation: https://github.com/google/lyra/issues/92#issuecomment-1265883697
       if(!quantizerModel) throw new Error("You need to init the quantizer model first.");
 
-      let outputs = quantizerModel.predict({"encode_input_frames:0":embedding, "encode_num_quantizers:0":numQuantizers}); 
+      let outputs = quantizerModel.predict({"encode_input_frames:0":embedding, "encode_num_quantizers:0":numQuantizers}); // Need to work out how to select the encoder subgraph: https://github.com/tensorflow/tfjs/issues/6919
 
       return outputs["StatefulPartitionedCall_1:0"]; // int32[46,1,1]
     }
@@ -113,8 +113,9 @@
     
     async function testQuantization() {
       console.log("Testing quantization:");
+      console.warn("DOESN'T WORK - BLOCKED BY: https://github.com/tensorflow/tfjs/issues/6919");
       await initModels({quantization:true});
-      let inputEmbedding = f.tensor(new Float32Array(64).fill(1), [1,1,64], "float32");
+      let inputEmbedding = tf.tensor(new Float32Array(64).fill(1), [1,1,64], "float32");
       console.log("input embedding:", inputEmbedding.dataSync());
       let bits = await quantize(inputEmbedding, 46);
       let outputEmbedding = dequantize(bits);
