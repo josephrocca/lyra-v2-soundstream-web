@@ -14,8 +14,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.20.0/dist/tf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite@0.0.1-alpha.9/dist/tf-tflite.js"></script>
   
-  <button id="testButton1" onclick="testEncoderDecoder(); testButton2.disabled=true;">Test Encoder/Decoder</button>
-  <button id="testButton2" onclick="testQuantization(); testButton1.disabled=true;">Test Quantization</button>
+  <button id="testButton1" onclick="testEncoderDecoder(); testButton1.disabled=true; testButton2.disabled=true;">Test Encoder/Decoder</button>
+  <button id="testButton2" onclick="testQuantization(); testButton1.disabled=true; testButton2.disabled=true;">Test Quantization</button>
   <p>See browser console for result. Note that this is a WIP - it isn't working yet!</p>
   
   <script>
