@@ -4,7 +4,10 @@ WIP demo: https://josephrocca.github.io/lyra-v2-soundstream-web
 
 Models: https://huggingface.co/rocca/lyra-v2-soundstream
 
-Currently blocked by:
+**Currently blocked by:**
 
-* tfjs-tflite: https://github.com/tensorflow/tfjs/issues/6094#issuecomment-1267870990
-* onnx: https://github.com/onnx/tensorflow-onnx/issues/2052
+* tfjs-tflite:
+   * https://github.com/tensorflow/tfjs/issues/6094#issuecomment-1267870990
+   * https://github.com/tensorflow/tfjs/issues/6919
+* onnx:
+   * https://github.com/onnx/tensorflow-onnx/issues/2055
