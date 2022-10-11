@@ -11,3 +11,4 @@ Models: https://huggingface.co/rocca/lyra-v2-soundstream
    * https://github.com/tensorflow/tfjs/issues/6919
 * onnx:
    * https://github.com/onnx/tensorflow-onnx/issues/2055
+     * https://github.com/google/lyra/issues/99
