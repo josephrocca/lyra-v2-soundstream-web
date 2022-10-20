@@ -1,6 +1,8 @@
 Lyra V2 (SoundStream) running in the browser
 
-WIP demo: https://josephrocca.github.io/lyra-v2-soundstream-web
+WIP demos:
+ * https://josephrocca.github.io/lyra-v2-soundstream-web
+ * https://josephrocca.github.io/lyra-v2-soundstream-web/onnx.html
 
 Models: https://huggingface.co/rocca/lyra-v2-soundstream
 
