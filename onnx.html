@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Lyra v2 (SoundStream) - ONNX Web Runtime</title>
+    <script src="./enable-threads.js"></script>
+  </head>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.12.1/dist/ort.js"></script>
+    
+    <div>
+      backend: <select id="backendSelectEl">
+        <option>wasm</option>
+        <option>webgl</option>
+      </select>
+      <br>
+      <button id="startBtn" onclick="main()">start</button>
+    </div>
+    <p><a href="https://github.com/josephrocca/lyra-v2-soundstream-web">github repo</a> - <a href="https://huggingface.co/rocca/lyra-v2-soundstream">huggingface repo</a></p>
+    
+    <script>
+      let encoderSession;
+      let decoderSession;
+      
+      if(self.crossOriginIsolated) { // needs to be cross-origin-isolated to use wasm threads. you need to serve this html file with these two headers: https://web.dev/coop-coep/
+        ort.env.wasm.numThreads = navigator.hardwareConcurrency
+      }
+      
+      async function main() {
+        startBtn.disabled = true;
+        startBtn.innerHTML = "see console";
+        
+        console.log("Downloading models... (see network tab for progress)");
+        
+        encoderSession = await ort.InferenceSession.create("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/onnx/soundstream_encoder.onnx", { executionProviders: [backendSelectEl.value] });
+        decoderSession = await ort.InferenceSession.create("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/onnx/lyragan.onnx", { executionProviders: [backendSelectEl.value] });
+        console.log("Models loaded.");
+
+        console.log("Running inference...");
+        let inputSamples = await getAudioSamples("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/test.wav", 0);
+        let result = await encode(audioSamples);
+        console.log("Finished inference.");
+        
+        console.log(`Encoder output:`, result);
+      }
+      
+      
+      
+      async function encode(audioSamples) { // `audioSamples` should be a 320-element Float32Array
+        if(!encoderSession) throw new Error("You need to init the encoder model first.");
+
+        const feeds = {"serving_default_input_audio:0": new ort.Tensor('float32', inputSamples, [1,320])};
+        const results = await encoderSession.run(feeds);
+
+        return results["StatefulPartitionedCall:0"].data; // float32[1,1,64]
+      }
+      
+      
+      
+      let audioCache = {};
+      async function getAudioSamples(url, chunkI) {
+        if(!audioCache[url]) {
+
+          // Need audio length to set max length of OfflineAudioContext - (hacky)
+          let audioDuration = await new Promise(r => {
+            let audio = new Audio();
+            audio.onloadedmetadata = () => r(audio.duration);
+            audio.src = url;
+          });
+
+          let audioData = await fetch(url).then(r => r.arrayBuffer());
+
+          let audioCtx = new OfflineAudioContext({sampleRate:16000, length:16000*audioDuration + 1000, numberOfChannels:1});
+
+          let decodedData = await audioCtx.decodeAudioData(audioData); // resampled to the AudioContext's sampling rate
+
+          let float32Data = decodedData.getChannelData(0); // Float32Array for channel 0
+
+          audioCache[url] = float32Data;
+        }
+
+        let audioChunk = audioCache[url].slice(chunkI*320, (chunkI+1)*320); // 320 samples at 16khz = 20ms
+
+        return audioChunk;
+      }
+    </script>
+  </body>
+</html>
