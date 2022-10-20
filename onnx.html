@@ -34,7 +34,7 @@
         console.log("Downloading models... (see network tab for progress)");
         
         encoderSession = await ort.InferenceSession.create("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/onnx/soundstream_encoder.onnx", { executionProviders: [backendSelectEl.value] });
-        decoderSession = await ort.InferenceSession.create("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/onnx/lyragan.onnx", { executionProviders: [backendSelectEl.value] });
+        // decoderSession = await ort.InferenceSession.create("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/onnx/lyragan.onnx", { executionProviders: [backendSelectEl.value] }); Error: "Uncaught (in promise) 40343192"
         console.log("Models loaded.");
 
         console.log("Running inference...");
