@@ -4,12 +4,12 @@ WIP demo: https://josephrocca.github.io/lyra-v2-soundstream-web
 
 Models: https://huggingface.co/rocca/lyra-v2-soundstream
 
+tflite-to-onnx conversion: https://colab.research.google.com/gist/josephrocca/401efe82bf18ffe93d5f3deca7ed7515/notebook.ipynb
+
 **Currently blocked by:**
 
 * tfjs-tflite:
    * https://github.com/tensorflow/tfjs/issues/6094#issuecomment-1267870990
    * https://github.com/tensorflow/tfjs/issues/6919
 * onnx:
-   * https://github.com/onnx/tensorflow-onnx/issues/2055
-     * https://github.com/google/lyra/issues/99
-   * https://github.com/onnx/tensorflow-onnx/issues/2059#issuecomment-1278561356
+   * https://github.com/onnx/tensorflow-onnx/issues/2065
