@@ -15,4 +15,5 @@ tflite-to-onnx conversion: https://colab.research.google.com/gist/josephrocca/40
    * https://github.com/tensorflow/tfjs/issues/6094#issuecomment-1267870990
    * https://github.com/tensorflow/tfjs/issues/6919
 * onnx:
-   * https://github.com/onnx/tensorflow-onnx/issues/2065
+   * https://github.com/microsoft/onnxruntime/issues/13383
+   * https://github.com/onnx/tensorflow-onnx/issues/2066
