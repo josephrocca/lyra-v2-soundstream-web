@@ -1,4 +1,4 @@
-Lyra V2 (SoundStream) running in the browser.
+[Lyra V2](https://github.com/google/lyra) (SoundStream) running in the browser.
 
 ### WIP demos:
  * https://josephrocca.github.io/lyra-v2-soundstream-web
