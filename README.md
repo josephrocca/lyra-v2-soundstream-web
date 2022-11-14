@@ -12,11 +12,12 @@ tflite-to-onnx conversion: https://colab.research.google.com/gist/josephrocca/40
 ### Currently blocked by:
 
 * tfjs-tflite:
+   * The Lyra 1.2.0 soundstream_encoder model just outputs zeros, and the 1.3.0 soundstream_encoder model has an infinite loop or something. Need to investigate.
    * https://github.com/tensorflow/tfjs/issues/6094#issuecomment-1267870990
 * onnx:
    * https://github.com/onnx/tensorflow-onnx/issues/2059#issuecomment-1296301499
    
    
 ### Todo:
-
+ * Upload separate 1.2.0 and 1.3.0 models to Hugging Face (current ones are 1.3.0)
  * Update [this thread](https://github.com/onnx/tensorflow-onnx/issues/2059#issuecomment-1285372747) RE correctness when you have both tflite and onnx working.
