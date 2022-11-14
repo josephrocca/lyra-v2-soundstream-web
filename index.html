@@ -15,7 +15,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite@0.0.1-alpha.9/dist/tf-tflite.js"></script>
   
   <div>
-    <button onclick="if(confirm('The encoder isn't currently working - seems like an infinite loop or something and may crash your tab. Continue? ')) { testEncoder(); this.parentElement.querySelectorAll('button').forEach(btn => btn.disabled=true); }">Test Encoder</button>
+    <button onclick="if(confirm('The encoder is not currently working - seems like an infinite loop or something and may crash your tab. Continue?')) { testEncoder(); this.parentElement.querySelectorAll('button').forEach(btn => btn.disabled=true); }">Test Encoder</button>
     <button onclick="testQuantizerEncoder(); this.parentElement.querySelectorAll('button').forEach(btn => btn.disabled=true);">Test Quantizer Encoder</button>
     <button onclick="testQuantizerDecoder(); this.parentElement.querySelectorAll('button').forEach(btn => btn.disabled=true);">Test Quantizer Decoder</button>
     <button onclick="testDecoder(); this.parentElement.querySelectorAll('button').forEach(btn => btn.disabled=true);">Test Decoder</button>
