@@ -14,8 +14,14 @@
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.20.0/dist/tf.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite@0.0.1-alpha.9/dist/tf-tflite.js"></script>
   
+  
+  <select id="modelVersionSelectEl">
+    <option value="1.3.0">1.3.0</option>
+    <option value="1.2.0">1.2.0</option>
+  </select>
+  
   <div>
-    <button onclick="if(confirm('The encoder is not currently working - seems like an infinite loop or something and may crash your tab. Continue?')) { testEncoder(); this.parentElement.querySelectorAll('button').forEach(btn => btn.disabled=true); }">Test Encoder</button>
+    <button onclick="testEncoder(); this.parentElement.querySelectorAll('button').forEach(btn => btn.disabled=true);">Test Encoder</button>
     <button onclick="testQuantizerEncoder(); this.parentElement.querySelectorAll('button').forEach(btn => btn.disabled=true);">Test Quantizer Encoder</button>
     <button onclick="testQuantizerDecoder(); this.parentElement.querySelectorAll('button').forEach(btn => btn.disabled=true);">Test Quantizer Decoder</button>
     <button onclick="testDecoder(); this.parentElement.querySelectorAll('button').forEach(btn => btn.disabled=true);">Test Decoder</button>
@@ -29,6 +35,10 @@
     let quantizerDecoderModel;
 
     async function initModels(opts={}) {
+      if(opt.encoder && modelVersionSelectEl.value === "1.3.0" && !confirm('The encoder is not currently working - seems like an infinite loop or something and may crash your tab. Continue?')) {
+        throw new Error("User cancelled model init.");
+      }
+      
       console.log("Loading models...");
       [
         encoderModel,
@@ -36,10 +46,10 @@
         quantizerDecoderModel,
         decoderModel,
       ] = await Promise.all([
-        opts.encoder ? tflite.loadTFLiteModel("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/tflite/soundstream_encoder.tflite") : undefined,
-        opts.quantizerEncoder ? tflite.loadTFLiteModel("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/tflite/quantizer_encoder.tflite") : undefined,
-        opts.quantizerDecoder ? tflite.loadTFLiteModel("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/tflite/quantizer_decoder.tflite") : undefined,
-        opts.decoder ? tflite.loadTFLiteModel("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/tflite/lyragan.tflite") : undefined,
+        opts.encoder ? tflite.loadTFLiteModel(`https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/tflite/${modelVersionSelectEl.value}/soundstream_encoder.tflite`) : undefined,
+        opts.quantizerEncoder ? tflite.loadTFLiteModel(`https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/tflite/${modelVersionSelectEl.value}/quantizer_encoder.tflite`) : undefined,
+        opts.quantizerDecoder ? tflite.loadTFLiteModel(`https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/tflite/${modelVersionSelectEl.value}/quantizer_decoder.tflite`) : undefined,
+        opts.decoder ? tflite.loadTFLiteModel(`https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/tflite/${modelVersionSelectEl.value}/lyragan.tflite`) : undefined,
       ]);
       console.log("Models finished loading.");
     }
