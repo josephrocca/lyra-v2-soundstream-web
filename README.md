@@ -19,5 +19,4 @@ tflite-to-onnx conversion: https://colab.research.google.com/gist/josephrocca/40
    
    
 ### Todo:
- * Upload separate 1.2.0 and 1.3.0 models to Hugging Face (current ones are 1.3.0)
  * Update [this thread](https://github.com/onnx/tensorflow-onnx/issues/2059#issuecomment-1285372747) RE correctness when you have both tflite and onnx working.
