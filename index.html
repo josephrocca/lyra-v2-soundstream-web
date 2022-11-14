@@ -39,7 +39,7 @@
     let quantizerDecoderModel;
 
     async function initModels(opts={}) {
-      if(opt.encoder && modelVersionSelectEl.value === "1.3.0" && !confirm('The encoder is not currently working - seems like an infinite loop or something and may crash your tab. Continue?')) {
+      if(opts.encoder && modelVersionSelectEl.value === "1.3.0" && !confirm('The encoder is not currently working - seems like an infinite loop or something and may crash your tab. Continue?')) {
         throw new Error("User cancelled model init.");
       }
       
