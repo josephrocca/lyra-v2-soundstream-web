@@ -59,7 +59,7 @@
 
       let outputs = quantizerEncoderModel.predict({"encode_input_frames:0":embedding, "encode_num_quantizers:0":numQuantizers}); // Need to work out how to select the encoder subgraph: https://github.com/tensorflow/tfjs/issues/6919
 
-      return outputs["StatefulPartitionedCall_1:0"]; // int32[46,1,1]
+      return outputs; // int32[46,1,1]
     }
 
     async function dequantize(bits) { // `bits` should be a tensor of type int32[46,1,1]
@@ -67,14 +67,14 @@
 
       let outputs = quantizerDecoderModel.predict({"decode_encoding_indices:0":bits});
 
-      return outputs["StatefulPartitionedCall:0"]; // float32[1,1,64]
+      return outputs; // float32[1,1,64]
     }
 
     async function decode(embedding) { // `embedding` should be a tensor of type float32[1,1,64]
       if(!decoderModel) throw new Error("You need to init the decoder model first.");
 
       let outputTensor = decoderModel.predict({"serving_default_input_audio:0":embedding});
-      return outputTensor["StatefulPartitionedCall:0"].dataSync(); // a 320-element Float32Array
+      return outputTensor; // float32[1,320]
     }
 
     let audioCache = {};
@@ -135,12 +135,12 @@
     }
     
     async function testQuantizerDecoder() {
-      console.log("Testing quantizer encoder:");
+      console.log("Testing quantizer decoder:");
       await initModels({quantizerDecoder:true});
-      let bits = tf.tensor(new Int32Array(64).fill(1), [46,1,1], "int32");
-      console.log("INPUT:", inputEmbedding.dataSync());
-      let outputEmbedding = dequantize(bits);
-      console.log("OUTPUT:", outputEmbedding.dataSync()); // float32[1,1,64]
+      let bits = tf.tensor(new Int32Array(46).fill(1), [46,1,1], "int32");
+      console.log("INPUT:", bits.dataSync());
+      let outputEmbedding = await dequantize(bits);
+      console.log("OUTPUT:", outputEmbedding); // float32[1,1,64]
     }
 
   </script>
