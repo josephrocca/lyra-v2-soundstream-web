@@ -62,10 +62,10 @@
         console.log("Models finished loading.");
       }
 
-      async function encode(audioSamples) { // `audioSamples` should be a 320-element Float32Array
+      async function encode(audioSamples) { // `audioSamples` should be a float32[1,320] 
         if(!encoderModel) throw new Error("You need to init the encoder model first.");
 
-        const feeds = {"serving_default_input_audio:0": new ort.Tensor('float32', audioSamples, [1,320])};
+        const feeds = {"serving_default_input_audio:0": audioSamples};
         const results = await encoderModel.run(feeds);
 
         return results["StatefulPartitionedCall:0"].data; // float32[1,1,64]
@@ -125,9 +125,10 @@
       async function testEncoder() {
         console.log("Testing encoder:");
         await initModels({encoder:true});
-        let inputSamples = await getAudioSamples("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/test.wav", 0);
-        console.log("INPUT:", inputSamples); // a 320-element Float32Array
-        let embedding = await encode(inputSamples);
+        let inputSamplesFloat32Arr = await getAudioSamples("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/test.wav", 0);
+        let audioSamples = new ort.Tensor('float32', inputSamplesFloat32Arr, [1,320]);
+        console.log("INPUT:", audioSamples);
+        let embedding = await encode(audioSamples);
         console.log("OUTPUT:", embedding); // float32[1,1,64]
       }
 
