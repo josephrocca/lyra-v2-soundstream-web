@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Lyra v2 (SoundStream) - ONNX Runtime Web</title>
+</head>
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.13.1/dist/ort.js"></script>
+  <script>
+    (async function() {
+      
+      let encoderModel = await ort.InferenceSession.create(`https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/onnx/1.3.0/soundstream_encoder.onnx`, { executionProviders: ["wasm"] });
+      let results1 = await encoderModel.run({"serving_default_input_audio:0": new ort.Tensor('float32', new Float32Array(320).fill(1), [1,320])});
+      let output1 = results1["StatefulPartitionedCall:0"].data; // float32[1,1,64]
+      console.log(output1);
+      
+      let quantizerEncoderModel = await ort.InferenceSession.create(`https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/onnx/1.3.0/quantizer_encoder.onnx`, { executionProviders: ["wasm"] });
+      let results2 = await quantizerEncoderModel.run({
+        "encode_input_frames:0": new ort.Tensor('float32', new Float32Array(64).fill(1), [1,1,64]),
+        "encode_num_quantizers:0": new ort.Tensor('int32', new Int32Array([46]), []),
+      });
+      let output2 = results2["StatefulPartitionedCall_1:0"].data; // int32[46,1,1]
+      console.log(output2);
+      
+      let quantizerDecoderModel = await ort.InferenceSession.create(`https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/onnx/1.3.0/quantizer_decoder.onnx`, { executionProviders: ["wasm"] });
+      let results3 = await quantizerDecoderModel.run({"decode_encoding_indices:0": new ort.Tensor('int32', new Int32Array(46).fill(1), [46,1,1])});
+      let output3 = results3["StatefulPartitionedCall:0"].data; // float32[1,1,64]
+      console.log(output3);
+      
+      let decoderModel = await ort.InferenceSession.create(`https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/onnx/1.3.0/lyragan.onnx`, { executionProviders: ["wasm"] });
+      let results4 = await decoderModel.run({"serving_default_input_audio:0": new ort.Tensor('float32', new Float32Array(64).fill(1), [1,1,64])});
+      let output4 = results4["StatefulPartitionedCall:0"].data; // float32[1,320]
+      console.log(output4);
+      
+    })();
+  </script>
+</body>
+</html>
