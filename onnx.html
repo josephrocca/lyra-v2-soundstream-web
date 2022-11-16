@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <title>Lyra v2 (SoundStream) - ONNX Web Runtime</title>
+    <title>Lyra v2 (SoundStream) - ONNX Runtime Web</title>
     <script src="./enable-threads.js"></script>
   </head>
   <body>
-    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.12.1/dist/ort.js"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.13.1/dist/ort.js"></script>
+
     <div>
       backend: <select id="backendSelectEl">
         <option>wasm</option>
@@ -17,48 +17,85 @@
       <br>
       <button id="startBtn" onclick="main()">start</button>
     </div>
+    
+    <div>
+      <span>Model version:</span>
+      <select id="modelVersionSelectEl">
+        <option value="1.3.0">1.3.0</option>
+        <option value="1.2.0">1.2.0</option>
+      </select>
+    </div>
+
+    <br>
+
+    <div>
+      <button onclick="testEncoder(); this.parentElement.querySelectorAll('button').forEach(btn => btn.disabled=true);">Test Encoder</button>
+      <button onclick="testQuantizerEncoder(); this.parentElement.querySelectorAll('button').forEach(btn => btn.disabled=true);">Test Quantizer Encoder</button>
+      <button onclick="testQuantizerDecoder(); this.parentElement.querySelectorAll('button').forEach(btn => btn.disabled=true);">Test Quantizer Decoder</button>
+      <button onclick="testDecoder(); this.parentElement.querySelectorAll('button').forEach(btn => btn.disabled=true);">Test Decoder</button>
+    </div>
+    
     <p>This is a WIP - not currently working. See README for blockers.</p>
     <p><a href="https://github.com/josephrocca/lyra-v2-soundstream-web">github repo</a> - <a href="https://huggingface.co/rocca/lyra-v2-soundstream">huggingface repo</a></p>
-    
+
     <script>
-      let encoderSession;
-      let decoderSession;
-      
       if(self.crossOriginIsolated) { // needs to be cross-origin-isolated to use wasm threads. you need to serve this html file with these two headers: https://web.dev/coop-coep/
         ort.env.wasm.numThreads = navigator.hardwareConcurrency
       }
       
-      async function main() {
-        startBtn.disabled = true;
-        startBtn.innerHTML = "see console";
-        
-        console.log("Downloading models... (see network tab for progress)");
-        
-        encoderSession = await ort.InferenceSession.create("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/onnx/soundstream_encoder.onnx", { executionProviders: [backendSelectEl.value] });
-        // decoderSession = await ort.InferenceSession.create("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/onnx/lyragan.onnx", { executionProviders: [backendSelectEl.value] }); Error: "Uncaught (in promise) 40343192"
-        console.log("Models loaded.");
+      let encoderModel;
+      let decoderModel;
+      let quantizerEncoderModel;
+      let quantizerDecoderModel;
 
-        console.log("Running inference...");
-        let audioSamples = await getAudioSamples("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/test.wav", 0);
-        let result = await encode(audioSamples);
-        console.log("Finished inference.");
-        
-        console.log(`Encoder output:`, result);
+      async function initModels(opts={}) {
+        console.log("Loading models...");
+        [
+          encoderModel,
+          quantizerEncoderModel,
+          quantizerDecoderModel,
+          decoderModel,
+        ] = await Promise.all([
+          opts.encoder ? ort.InferenceSession.create(`https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/onnx/${modelVersionSelectEl.value}/soundstream_encoder.onnx`, { executionProviders: [backendSelectEl.value] }) : undefined,
+          opts.quantizerEncoder ? ort.InferenceSession.create(`https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/onnx/${modelVersionSelectEl.value}/quantizer_encoder.onnx`, { executionProviders: [backendSelectEl.value] }) : undefined,
+          opts.quantizerDecoder ? ort.InferenceSession.create(`https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/onnx/${modelVersionSelectEl.value}/quantizer_decoder.onnx`, { executionProviders: [backendSelectEl.value] }) : undefined,
+          opts.decoder ? ort.InferenceSession.create(`https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/onnx/${modelVersionSelectEl.value}/lyragan.onnx`, { executionProviders: [backendSelectEl.value] }) : undefined,
+        ]);
+        console.log("Models finished loading.");
       }
-      
-      
-      
+
       async function encode(audioSamples) { // `audioSamples` should be a 320-element Float32Array
-        if(!encoderSession) throw new Error("You need to init the encoder model first.");
+        if(!encoderModel) throw new Error("You need to init the encoder model first.");
 
         const feeds = {"serving_default_input_audio:0": new ort.Tensor('float32', audioSamples, [1,320])};
-        const results = await encoderSession.run(feeds);
+        const results = await encoderModel.run(feeds);
 
         return results["StatefulPartitionedCall:0"].data; // float32[1,1,64]
       }
-      
-      
-      
+
+      async function quantize(embedding, numQuantizers) { // `embedding` should be a tensor of type float32[1,1,64]. `numQuantizers` is an int32 scalar and can be either 16, 32, or 46. Explanation: https://github.com/google/lyra/issues/92#issuecomment-1265883697
+        if(!quantizerEncoderModel) throw new Error("You need to init the quantizer model first.");
+
+        let outputs = await quantizerEncoderModel.run({"encode_input_frames:0":embedding, "encode_num_quantizers:0":numQuantizers}); // Need to work out how to select the encoder subgraph: https://github.com/tensorflow/tfjs/issues/6919
+
+        return outputs["StatefulPartitionedCall_1:0"].data; // int32[46,1,1]
+      }
+
+      async function dequantize(bits) { // `bits` should be a tensor of type int32[46,1,1]
+        if(!quantizerDecoderModel) throw new Error("You need to init the quantizer model first.");
+
+        let outputs = await quantizerDecoderModel.run({"decode_encoding_indices:0":bits});
+
+        return outputs["StatefulPartitionedCall:0"].data; // float32[1,1,64]
+      }
+
+      async function decode(embedding) { // `embedding` should be a tensor of type float32[1,1,64]
+        if(!decoderModel) throw new Error("You need to init the decoder model first.");
+
+        let outputTensor = await decoderModel.run({"serving_default_input_audio:0":embedding});
+        return outputTensor["StatefulPartitionedCall:0"].data; // float32[1,320]
+      }
+
       let audioCache = {};
       async function getAudioSamples(url, chunkI) {
         if(!audioCache[url]) {
@@ -85,6 +122,46 @@
 
         return audioChunk;
       }
+
+
+      async function testEncoder() {
+        console.log("Testing encoder:");
+        await initModels({encoder:true});
+        let inputSamples = await getAudioSamples("https://huggingface.co/rocca/lyra-v2-soundstream/resolve/main/test.wav", 0);
+        console.log("INPUT:", inputSamples); // a 320-element Float32Array
+        let embedding = await encode(inputSamples);
+        console.log("OUTPUT:", embedding); // float32[1,1,64]
+        console.warn("Not sure why output is all zeros...");
+      }
+
+      async function testDecoder() {
+        console.log("Testing decoder:");
+        await initModels({decoder:true});
+        let inputEmbedding = new ort.Tensor('float32', new Float32Array(64).fill(1), [1,1,64]);
+        console.log("INPUT:", inputEmbedding);
+        let embedding = await decode(inputEmbedding); 
+        console.log("OUTPUT:", embedding); // a 320-element Float32Array
+        console.warn("Possibly all zeros because of the strange input we're giving it. TODO: Once you get encoder working, use encoder's output as the input for this test.");
+      }
+
+      async function testQuantizerEncoder() {
+        console.log("Testing quantizer encoder:");
+        await initModels({quantizerEncoder:true});
+        let inputEmbedding = new ort.Tensor('float32', new Float32Array(64).fill(1), [1,1,64]);
+        console.log("INPUT:", inputEmbedding);
+        let bits = await quantize(inputEmbedding, 46);
+        console.log("OUTPUT:", bits); // int32[46,1,1]
+      }
+
+      async function testQuantizerDecoder() {
+        console.log("Testing quantizer decoder:");
+        await initModels({quantizerDecoder:true});
+        let bits = new ort.Tensor('int32', new Int32Array(46).fill(1), [46,1,1]);
+        console.log("INPUT:", bits);
+        let outputEmbedding = await dequantize(bits);
+        console.log("OUTPUT:", outputEmbedding); // float32[1,1,64]
+      }
+
     </script>
   </body>
 </html>
