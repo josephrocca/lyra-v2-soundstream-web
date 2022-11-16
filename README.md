@@ -1,8 +1,8 @@
 [Lyra V2](https://github.com/google/lyra) (SoundStream) running in the browser.
 
 ### WIP Web Demos:
- * https://josephrocca.github.io/lyra-v2-soundstream-web/onnx.html
  * https://josephrocca.github.io/lyra-v2-soundstream-web/onnx-simple.html
+ * https://josephrocca.github.io/lyra-v2-soundstream-web/onnx.html
  * https://josephrocca.github.io/lyra-v2-soundstream-web/tflite.html
 
 ### Models:
