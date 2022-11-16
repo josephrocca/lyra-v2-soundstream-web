@@ -2,12 +2,17 @@
 
 ### WIP demos:
  * https://josephrocca.github.io/lyra-v2-soundstream-web/onnx.html
+ * https://josephrocca.github.io/lyra-v2-soundstream-web/onnx-simple.html
  * https://josephrocca.github.io/lyra-v2-soundstream-web/tflite.html
  
 
-Models: https://huggingface.co/rocca/lyra-v2-soundstream
+**Models**: https://huggingface.co/rocca/lyra-v2-soundstream
 
-tflite-to-onnx conversion: https://colab.research.google.com/gist/josephrocca/401efe82bf18ffe93d5f3deca7ed7515/notebook.ipynb
+**TFLite-to-ONNX conversion notebook**: https://colab.research.google.com/gist/josephrocca/401efe82bf18ffe93d5f3deca7ed7515/notebook.ipynb
+
+### ONNX Python vs Web Inference Comparison:
+ * Python: https://colab.research.google.com/gist/josephrocca/605006bbeb49df6c9ab7efd18a9cdd0d/notebook.ipynb
+ * Web: https://josephrocca.github.io/lyra-v2-soundstream-web/onnx-simple.html
 
 ### Currently blocked by:
 
