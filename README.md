@@ -19,7 +19,7 @@
 
 ### Currently blocked by:
 * ONNX:
-   * TFLite-to-ONNX conversion process is producing models which don't have matching outputs at inference, except for the quantization decoder model.
+   * TFLite-to-ONNX conversion process is producing models which don't have matching outputs at inference, except for the quantization decoder model. https://github.com/microsoft/onnxruntime/issues/13670
 * tfjs-tflite:
    * The Lyra 1.2.0 soundstream_encoder model just outputs zeros for some reason, and the 1.3.0 soundstream_encoder model has an infinite loop or something. Need to investigate - latter seems like a tfjs-tflite bug.
    * https://github.com/tensorflow/tfjs/issues/6094#issuecomment-1267870990 (can likely work around this by running each in its own worker, or worst case, in its own iframe)
