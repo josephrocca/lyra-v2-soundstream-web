@@ -8,11 +8,12 @@
 
 **Models**: https://huggingface.co/rocca/lyra-v2-soundstream
 
-**TFLite-to-ONNX conversion notebook**: https://colab.research.google.com/gist/josephrocca/401efe82bf18ffe93d5f3deca7ed7515/notebook.ipynb
+**TFLite-to-ONNX conversion notebook**: https://colab.research.google.com/gist/josephrocca/401efe82bf18ffe93d5f3deca7ed7515
 
-### ONNX Python vs Web Inference Comparison:
- * Python: https://colab.research.google.com/gist/josephrocca/605006bbeb49df6c9ab7efd18a9cdd0d/notebook.ipynb
- * Web: https://josephrocca.github.io/lyra-v2-soundstream-web/onnx-simple.html
+### Inference Comparison:
+ * Python ONNX: https://colab.research.google.com/gist/josephrocca/605006bbeb49df6c9ab7efd18a9cdd0d
+ * Web ONNX: https://josephrocca.github.io/lyra-v2-soundstream-web/onnx-simple.html
+ * Python TFLite: https://colab.research.google.com/gist/josephrocca/ba3021195dfb4f91ffc7898cea6f8596
 
 ### Currently blocked by:
 
