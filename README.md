@@ -2,6 +2,7 @@
 
 ### WIP Web Demos:
  * https://josephrocca.github.io/lyra-v2-soundstream-web/onnx-simple.html
+ * https://josephrocca.github.io/lyra-v2-soundstream-web/tflite-simple.html
  * https://josephrocca.github.io/lyra-v2-soundstream-web/onnx.html
  * https://josephrocca.github.io/lyra-v2-soundstream-web/tflite.html
 
