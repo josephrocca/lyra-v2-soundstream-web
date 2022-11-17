@@ -11,7 +11,7 @@
    * TFLite-to-ONNX conversion process is producing ONNX models which don't have matching outputs between Web and Python at inference, except for the quantization decoder model. https://github.com/microsoft/onnxruntime/issues/13670 
    * TFLite "VAR" ops conversion issues? https://github.com/onnx/tensorflow-onnx/issues/2059#issuecomment-1317139150
 * tfjs-tflite:
-   * The Lyra 1.2.0 soundstream_encoder model just outputs zeros for some reason, and the 1.3.0 soundstream_encoder model has an infinite loop or something. Need to investigate - latter seems like a tfjs-tflite bug.
+   * Errors (and infinite loop if cross-origin isolated) on soundstream_encoder: https://github.com/tensorflow/tfjs/issues/7055
    * https://github.com/tensorflow/tfjs/issues/6094#issuecomment-1267870990 (can likely work around this by running each in its own worker, or worst case, in its own iframe)
 
 ### TFLite-to-ONNX conversion:
