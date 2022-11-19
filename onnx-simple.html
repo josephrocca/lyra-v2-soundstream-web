@@ -12,7 +12,7 @@
     <option value="ort">ORT</option>
     <option value="onnx">ONNX (not working correctly)</option>
   </select>
-  <button onclick="start()">start</button>
+  <button onclick="start(); this.disabled=true;">start</button>
   <p><a href="https://github.com/josephrocca/lyra-v2-soundstream-web">github repo</a> - <a href="https://huggingface.co/rocca/lyra-v2-soundstream">huggingface repo</a></p>
   
   <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.13.1/dist/ort.js"></script>
