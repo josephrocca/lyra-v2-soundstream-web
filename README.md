@@ -8,7 +8,7 @@
 
 ### Currently blocked by:
 * ONNX:
-   * TFLite-to-ONNX conversion process is producing ONNX models which don't have matching outputs between ONNX Web and ONNX Python runtimes at inference, except for the quantization decoder model. https://github.com/microsoft/onnxruntime/issues/13670 
+   * ~~TFLite-to-ONNX conversion process is producing ONNX models which don't have matching outputs between ONNX Web and ONNX Python runtimes at inference, except for the quantization decoder model.~~ https://github.com/microsoft/onnxruntime/issues/13670 (This has been unblocked in the meantime by using ORT instead of normal ONNX model files)
    * TFLite "VAR" ops conversion issues? https://github.com/onnx/tensorflow-onnx/issues/2059#issuecomment-1317139150 and https://github.com/google/lyra/issues/99#issuecomment-1318229554
 * tfjs-tflite:
    * Errors (and infinite loop if cross-origin isolated) on soundstream_encoder: https://github.com/tensorflow/tfjs/issues/7055
