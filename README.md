@@ -24,6 +24,7 @@
  
  ### Models:
  * ONNX: https://huggingface.co/rocca/lyra-v2-soundstream/tree/main/onnx
+ * ORT: https://huggingface.co/rocca/lyra-v2-soundstream/tree/main/ort
  * TFLite: https://huggingface.co/rocca/lyra-v2-soundstream/tree/main/tflite
    
 ### Todo:
