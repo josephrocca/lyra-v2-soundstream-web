@@ -1,4 +1,8 @@
-### Edit: Looks like someone beat me to it! → https://github.com/shiguredo/lyra-wasm
+### Looks like someone beat me to it! → https://github.com/shiguredo/lyra-wasm
+
+IIUC, the above-linked repo is a direct Emscripten port of the C++ Lyra code - so it doesn't use TFjs-TFLite or ONNX Runtime Web. Seems to work great, so I'll probably not update this repo unless it turns out it'd be handy to have a WebGL version, or if there's reason to believe that using TFjs-TFLite or ONNX Runtime Web would be significantly faster in general.
+
+---
 
 [Lyra V2](https://github.com/google/lyra) (SoundStream) running in the browser.
 
