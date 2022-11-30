@@ -1,3 +1,5 @@
+### Edit: Looks like someone beat me to it! → https://github.com/shiguredo/lyra-wasm
+
 [Lyra V2](https://github.com/google/lyra) (SoundStream) running in the browser.
 
 ### WIP Web Demos:
