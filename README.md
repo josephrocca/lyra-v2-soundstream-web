@@ -1,6 +1,8 @@
 ### Looks like someone beat me to it! → https://github.com/shiguredo/lyra-wasm
 
-IIUC, the above-linked repo is a direct Emscripten port of the C++ Lyra code - so it doesn't use [TFjs-TFLite](https://github.com/tensorflow/tfjs/tree/master/tfjs-tflite) or [ONNX Runtime Web](https://github.com/microsoft/onnxruntime/tree/main/js/web). Seems to work great, so I'll probably not update this repo unless it turns out it'd be handy to have a WebGL version, or if there's reason to believe that using TFjs-TFLite or ONNX Runtime Web would be significantly faster in general.
+### Just found another → https://github.com/neuvideo/lyra-js
+
+IIUC, the above-linked repos are direct Emscripten ports of the C++ Lyra code - so they don't use [TFjs-TFLite](https://github.com/tensorflow/tfjs/tree/master/tfjs-tflite) or [ONNX Runtime Web](https://github.com/microsoft/onnxruntime/tree/main/js/web). They seem to work great, so I'll probably not update this repo unless it turns out it'd be handy to have a WebGL version, or if there's reason to believe that using TFjs-TFLite or ONNX Runtime Web would be significantly faster in general.
 
 ---
 
